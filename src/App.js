@@ -1,28 +1,41 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { history } from './helpers'
+import {
+  Route,
+  Redirect,
+  BrowserRouter as Router,
+  Switch
+} from 'react-router-dom'
+import SignIn from './Components/signInForm'
+import Register from './Components/registerForm'
+import NavigationRoutesPage from './Routes'
 
 class App extends Component {
-  render() {
+  render () {
+    // validate authentication
+    const isAuth = () => {
+      let access_token = localStorage.getItem('user')
+      if (access_token) {
+        return true
+      }
+      return false
+    }
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+      <Router>
+        <div className='app'>
+          <Switch>
+            <Route path='/login' component={SignIn} />
+            <Route exact path='/register' component={Register} />
+            {isAuth() ? (
+              <Route path='/' name='orders' component={NavigationRoutesPage} />
+            ) : (
+              <Route exact path='/' render={() => <Redirect to='/login' />} />
+            )}
+          </Switch>
+        </div>
+      </Router>
+    )
   }
 }
 
-export default App;
+export default App
