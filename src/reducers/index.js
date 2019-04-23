@@ -1,10 +1,20 @@
 import { combineReducers } from 'redux'
-import { alert } from './alert.reducer'
+import { login, register, logout } from './user.reducers'
+import {
+  createOrder,
+  deleteOrder,
+  getOrders,
+  editOrder
+} from './orders.reducers'
 
-// export * from './alert.reducer'
-
-const rootReducer = combineReducers({
-  alert
+const authReducers = combineReducers({
+  loginResp: login,
+  createOrder: createOrder,
+  deleteOrder: deleteOrder,
+  getOrders: getOrders,
+  editOrder: editOrder,
+  registerResp: register,
+  logoutResp: logout
 })
 
-export default rootReducer
+export default authReducers

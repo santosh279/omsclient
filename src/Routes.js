@@ -16,7 +16,12 @@ class NavigationRoutesPage extends React.Component {
           <SideBar {...this.props} />
           <div
             class='row'
-            style={{ marginTop: '10%', maxWidth: '55%', marginLeft: '20%' }}
+            style={{
+              marginTop: '10%',
+              maxWidth: '55%',
+              marginLeft: '20%',
+              position: 'relative'
+            }}
           >
             <Switch>
               <Route exact path='/orders' component={Orders} />

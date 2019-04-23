@@ -1,741 +1,244 @@
-// /* eslint-disable no-console */
-
-// import React from 'react'
-// import PropTypes from 'prop-types'
-// import classNames from 'classnames'
-// import { withStyles } from '@material-ui/core/styles'
-// import TableCell from '@material-ui/core/TableCell'
-// import TableSortLabel from '@material-ui/core/TableSortLabel'
-// import Paper from '@material-ui/core/Paper'
-// import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
-
-// const styles = theme => ({
-//   table: {
-//     fontFamily: theme.typography.fontFamily
-//   },
-//   flexContainer: {
-//     display: 'flex',
-//     alignItems: 'center',
-//     boxSizing: 'border-box'
-//   },
-//   tableRow: {
-//     cursor: 'pointer'
-//   },
-//   tableRowHover: {
-//     '&:hover': {
-//       backgroundColor: theme.palette.grey[200]
-//     }
-//   },
-//   tableCell: {
-//     flex: 1
-//   },
-//   noClick: {
-//     cursor: 'initial'
-//   }
-// })
-
-// class MuiVirtualizedTable extends React.PureComponent {
-//   getRowClassName = ({ index }) => {
-//     const { classes, rowClassName, onRowClick } = this.props
-
-//     return classNames(classes.tableRow, classes.flexContainer, rowClassName, {
-//       [classes.tableRowHover]: index !== -1 && onRowClick != null
-//     })
-//   }
-
-//   cellRenderer = ({ cellData, columnIndex = null }) => {
-//     const { columns, classes, rowHeight, onRowClick } = this.props
-//     return (
-//       <TableCell
-//         component='div'
-//         className={classNames(classes.tableCell, classes.flexContainer, {
-//           [classes.noClick]: onRowClick == null
-//         })}
-//         variant='body'
-//         style={{ height: rowHeight }}
-//         align={
-//           (columnIndex != null && columns[columnIndex].numeric) || false
-//             ? 'right'
-//             : 'left'
-//         }
-//       >
-//         {cellData}
-//       </TableCell>
-//     )
-//   }
-
-//   headerRenderer = ({ label, columnIndex, dataKey, sortBy, sortDirection }) => {
-//     const { headerHeight, columns, classes, sort } = this.props
-//     const direction = {
-//       [SortDirection.ASC]: 'asc',
-//       [SortDirection.DESC]: 'desc'
-//     }
-
-//     const inner =
-//       !columns[columnIndex].disableSort && sort != null ? (
-//         <TableSortLabel
-//           active={dataKey === sortBy}
-//           direction={direction[sortDirection]}
-//         >
-//           {label}
-//         </TableSortLabel>
-//       ) : (
-//         label
-//       )
-
-//     return (
-//       <TableCell
-//         component='div'
-//         className={classNames(
-//           classes.tableCell,
-//           classes.flexContainer,
-//           classes.noClick
-//         )}
-//         variant='head'
-//         style={{ height: headerHeight }}
-//         align={columns[columnIndex].numeric || false ? 'right' : 'left'}
-//       >
-//         {inner}
-//       </TableCell>
-//     )
-//   }
-
-//   render () {
-//     const { classes, columns, ...tableProps } = this.props
-//     return (
-//       <AutoSizer>
-//         {({ height, width }) => (
-//           <Table
-//             className={classes.table}
-//             height={height}
-//             width={width}
-//             {...tableProps}
-//             rowClassName={this.getRowClassName}
-//           >
-//             {columns.map(
-//               (
-//                 { cellContentRenderer = null, className, dataKey, ...other },
-//                 index
-//               ) => {
-//                 let renderer
-//                 if (cellContentRenderer != null) {
-//                   renderer = cellRendererProps =>
-//                     this.cellRenderer({
-//                       cellData: cellContentRenderer(cellRendererProps),
-//                       columnIndex: index
-//                     })
-//                 } else {
-//                   renderer = this.cellRenderer
-//                 }
-
-//                 return (
-//                   <Column
-//                     key={dataKey}
-//                     headerRenderer={headerProps =>
-//                       this.headerRenderer({
-//                         ...headerProps,
-//                         columnIndex: index
-//                       })
-//                     }
-//                     className={classNames(classes.flexContainer, className)}
-//                     cellRenderer={renderer}
-//                     dataKey={dataKey}
-//                     {...other}
-//                   />
-//                 )
-//               }
-//             )}
-//           </Table>
-//         )}
-//       </AutoSizer>
-//     )
-//   }
-// }
-
-// MuiVirtualizedTable.propTypes = {
-//   classes: PropTypes.object.isRequired,
-//   columns: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       cellContentRenderer: PropTypes.func,
-//       dataKey: PropTypes.string.isRequired,
-//       width: PropTypes.number.isRequired
-//     })
-//   ).isRequired,
-//   headerHeight: PropTypes.number,
-//   onRowClick: PropTypes.func,
-//   rowClassName: PropTypes.string,
-//   rowHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
-//   sort: PropTypes.func
-// }
-
-// MuiVirtualizedTable.defaultProps = {
-//   headerHeight: 56,
-//   rowHeight: 56
-// }
-
-// const WrappedVirtualizedTable = withStyles(styles)(MuiVirtualizedTable)
-
-// const data = [
-//   ['Frozen yoghurt', 'hee', 'asgh', 12 - 12 - 12],
-//   ['Ice cream sandwich', 'qwer', 'wer', 12 - 12 - 12],
-//   ['Eclair', 'asd', 'cvbn', 12 - 12 - 12]
-// ]
-
-// let id = 0
-// function createData (
-//   orderid,
-//   ordername,
-//   customername,
-//   customeraddress,
-//   duedate
-// ) {
-//   id += 1
-//   return { id, ordername, customername, customeraddress, duedate, actions }
-// }
-
-// const rows = []
-
-// for (let i = 0; i < 200; i += 1) {
-//   const randomSelection = data[Math.floor(Math.random() * data.length)]
-//   rows.push(createData(...randomSelection))
-// }
-
-// function TableData () {
-//   return (
-//     <Paper style={{ height: 400, width: '675px' }}>
-//       <WrappedVirtualizedTable
-//         rowCount={rows.length}
-//         rowGetter={({ index }) => rows[index]}
-//         onRowClick={event => console.log(event)}
-//         columns={[
-//           {
-//             width: 120,
-//             flexGrow: 1.0,
-//             label: 'Order Name',
-//             dataKey: 'ordername'
-//           },
-//           {
-//             width: 120,
-//             label: 'Customer Name',
-//             dataKey: 'customername'
-//             // numeric: true
-//           },
-//           {
-//             width: 120,
-//             label: 'Customer Address',
-//             dataKey: 'customeraddress'
-//           },
-//           {
-//             width: 120,
-//             label: 'Due Date',
-//             dataKey: 'duedate',
-//             numeric: true
-//           },
-//           {
-//             width: 120,
-//             label: 'Actions',
-//             dataKey: 'actions'
-//           }
-//           //   {
-//           //     width: 120,
-//           //     label: 'Protein (g)',
-//           //     dataKey: 'protein',
-//           //     // numeric: true
-//           //   }
-//         ]}
-//       />
-//     </Paper>
-//   )
-// }
-
-// export default TableData
-
-// import React from 'react'
-// import classNames from 'classnames'
-// import PropTypes from 'prop-types'
-// import { withStyles } from '@material-ui/core/styles'
-// import Table from '@material-ui/core/Table'
-// import TableBody from '@material-ui/core/TableBody'
-// import TableCell from '@material-ui/core/TableCell'
-// import TableHead from '@material-ui/core/TableHead'
-// import TablePagination from '@material-ui/core/TablePagination'
-// import TableRow from '@material-ui/core/TableRow'
-// import TableSortLabel from '@material-ui/core/TableSortLabel'
-// import Toolbar from '@material-ui/core/Toolbar'
-// import Typography from '@material-ui/core/Typography'
-// import Paper from '@material-ui/core/Paper'
-// import Checkbox from '@material-ui/core/Checkbox'
-// import IconButton from '@material-ui/core/IconButton'
-// import Tooltip from '@material-ui/core/Tooltip'
-// import DeleteIcon from '@material-ui/icons/Delete'
-// import FilterListIcon from '@material-ui/icons/FilterList'
-// import { lighten } from '@material-ui/core/styles/colorManipulator'
-
-// let counter = 0
-// function createData (name, calories, fat, carbs, protein) {
-//   counter += 1
-//   return { id: counter, name, calories, fat, carbs, protein }
-// }
-
-// function desc (a, b, orderBy) {
-//   if (b[orderBy] < a[orderBy]) {
-//     return -1
-//   }
-//   if (b[orderBy] > a[orderBy]) {
-//     return 1
-//   }
-//   return 0
-// }
-
-// function stableSort (array, cmp) {
-//   const stabilizedThis = array.map((el, index) => [el, index])
-//   stabilizedThis.sort((a, b) => {
-//     const order = cmp(a[0], b[0])
-//     if (order !== 0) return order
-//     return a[1] - b[1]
-//   })
-//   return stabilizedThis.map(el => el[0])
-// }
-
-// function getSorting (order, orderBy) {
-//   return order === 'desc'
-//     ? (a, b) => desc(a, b, orderBy)
-//     : (a, b) => -desc(a, b, orderBy)
-// }
-
-// const rows = [
-//   {
-//     id: 'name',
-//     numeric: false,
-//     disablePadding: true,
-//     label: 'Dessert (100g serving)'
-//   },
-//   { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-//   { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-//   { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-//   { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' }
-// ]
-
-// class EnhancedTableHead extends React.Component {
-//   createSortHandler = property => event => {
-//     this.props.onRequestSort(event, property)
-//   }
-
-//   render () {
-//     const {
-//       onSelectAllClick,
-//       order,
-//       orderBy,
-//       numSelected,
-//       rowCount
-//     } = this.props
-
-//     return (
-//       <TableHead>
-//         <TableRow>
-//           <TableCell padding='checkbox'>
-//             <Checkbox
-//               indeterminate={numSelected > 0 && numSelected < rowCount}
-//               checked={numSelected === rowCount}
-//               onChange={onSelectAllClick}
-//             />
-//           </TableCell>
-//           {rows.map(
-//             row => (
-//               <TableCell
-//                 key={row.id}
-//                 align={row.numeric ? 'right' : 'left'}
-//                 padding={row.disablePadding ? 'none' : 'default'}
-//                 sortDirection={orderBy === row.id ? order : false}
-//               >
-//                 <Tooltip
-//                   title='Sort'
-//                   placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-//                   enterDelay={300}
-//                 >
-//                   <TableSortLabel
-//                     active={orderBy === row.id}
-//                     direction={order}
-//                     onClick={this.createSortHandler(row.id)}
-//                   >
-//                     {row.label}
-//                   </TableSortLabel>
-//                 </Tooltip>
-//               </TableCell>
-//             ),
-//             this
-//           )}
-//         </TableRow>
-//       </TableHead>
-//     )
-//   }
-// }
-
-// EnhancedTableHead.propTypes = {
-//   numSelected: PropTypes.number.isRequired,
-//   onRequestSort: PropTypes.func.isRequired,
-//   onSelectAllClick: PropTypes.func.isRequired,
-//   order: PropTypes.string.isRequired,
-//   orderBy: PropTypes.string.isRequired,
-//   rowCount: PropTypes.number.isRequired
-// }
-
-// const toolbarStyles = theme => ({
-//   root: {
-//     paddingRight: theme.spacing.unit
-//   },
-//   highlight:
-//     theme.palette.type === 'light'
-//       ? {
-//         color: theme.palette.secondary.main,
-//         backgroundColor: lighten(theme.palette.secondary.light, 0.85)
-//       }
-//       : {
-//         color: theme.palette.text.primary,
-//         backgroundColor: theme.palette.secondary.dark
-//       },
-//   spacer: {
-//     flex: '1 1 100%'
-//   },
-//   actions: {
-//     color: theme.palette.text.secondary
-//   },
-//   title: {
-//     flex: '0 0 auto'
-//   }
-// })
-
-// let EnhancedTableToolbar = props => {
-//   const { numSelected, classes } = props
-
-//   return (
-//     <Toolbar
-//       className={classNames(classes.root, {
-//         [classes.highlight]: numSelected > 0
-//       })}
-//     >
-//       <div className={classes.title}>
-//         {numSelected > 0 ? (
-//           <Typography color='inherit' variant='subtitle1'>
-//             {numSelected} selected
-//           </Typography>
-//         ) : (
-//           <Typography variant='h6' id='tableTitle'>
-//             Nutrition
-//           </Typography>
-//         )}
-//       </div>
-//       <div className={classes.spacer} />
-//       <div className={classes.actions}>
-//         {numSelected > 0 ? (
-//           <Tooltip title='Delete'>
-//             <IconButton aria-label='Delete'>
-//               <DeleteIcon />
-//             </IconButton>
-//           </Tooltip>
-//         ) : (
-//           <Tooltip title='Filter list'>
-//             <IconButton aria-label='Filter list'>
-//               <FilterListIcon />
-//             </IconButton>
-//           </Tooltip>
-//         )}
-//       </div>
-//     </Toolbar>
-//   )
-// }
-
-// EnhancedTableToolbar.propTypes = {
-//   classes: PropTypes.object.isRequired,
-//   numSelected: PropTypes.number.isRequired
-// }
-
-// EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar)
-
-// const styles = theme => ({
-//   root: {
-//     width: '100%',
-//     marginTop: theme.spacing.unit * 3
-//   },
-//   table: {
-//     minWidth: 1020
-//   },
-//   tableWrapper: {
-//     overflowX: 'auto'
-//   }
-// })
-
-// class Tables extends React.Component {
-//   state = {
-//     order: 'asc',
-//     orderBy: 'calories',
-//     selected: [],
-//     data: [
-//       createData('Cupcake', 305, 3.7, 67, 4.3),
-//       createData('Donut', 452, 25.0, 51, 4.9),
-//       createData('Eclair', 262, 16.0, 24, 6.0),
-//       createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//       createData('Gingerbread', 356, 16.0, 49, 3.9),
-//       createData('Honeycomb', 408, 3.2, 87, 6.5),
-//       createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//       createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//       createData('KitKat', 518, 26.0, 65, 7.0),
-//       createData('Lollipop', 392, 0.2, 98, 0.0),
-//       createData('Marshmallow', 318, 0, 81, 2.0),
-//       createData('Nougat', 360, 19.0, 9, 37.0),
-//       createData('Oreo', 437, 18.0, 63, 4.0)
-//     ],
-//     page: 0,
-//     rowsPerPage: 5
-//   }
-
-//   handleRequestSort = (event, property) => {
-//     const orderBy = property
-//     let order = 'desc'
-
-//     if (this.state.orderBy === property && this.state.order === 'desc') {
-//       order = 'asc'
-//     }
-
-//     this.setState({ order, orderBy })
-//   }
-
-//   handleSelectAllClick = event => {
-//     if (event.target.checked) {
-//       this.setState(state => ({ selected: state.data.map(n => n.id) }))
-//       return
-//     }
-//     this.setState({ selected: [] })
-//   }
-
-//   handleClick = (event, id) => {
-//     const { selected } = this.state
-//     const selectedIndex = selected.indexOf(id)
-//     let newSelected = []
-
-//     if (selectedIndex === -1) {
-//       newSelected = newSelected.concat(selected, id)
-//     } else if (selectedIndex === 0) {
-//       newSelected = newSelected.concat(selected.slice(1))
-//     } else if (selectedIndex === selected.length - 1) {
-//       newSelected = newSelected.concat(selected.slice(0, -1))
-//     } else if (selectedIndex > 0) {
-//       newSelected = newSelected.concat(
-//         selected.slice(0, selectedIndex),
-//         selected.slice(selectedIndex + 1)
-//       )
-//     }
-
-//     this.setState({ selected: newSelected })
-//   }
-
-//   handleChangePage = (event, page) => {
-//     this.setState({ page })
-//   }
-
-//   handleChangeRowsPerPage = event => {
-//     this.setState({ rowsPerPage: event.target.value })
-//   }
-
-//   isSelected = id => this.state.selected.indexOf(id) !== -1
-
-//   render () {
-//     const { classes } = this.props
-//     const { data, order, orderBy, selected, rowsPerPage, page } = this.state
-//     const emptyRows =
-//       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage)
-
-//     return (
-//       <Paper className={classes.root}>
-//         <EnhancedTableToolbar numSelected={selected.length} />
-//         <div className={classes.tableWrapper}>
-//           <Table className={classes.table} aria-labelledby='tableTitle'>
-//             <EnhancedTableHead
-//               numSelected={selected.length}
-//               order={order}
-//               orderBy={orderBy}
-//               onSelectAllClick={this.handleSelectAllClick}
-//               onRequestSort={this.handleRequestSort}
-//               rowCount={data.length}
-//             />
-//             <TableBody>
-//               {stableSort(data, getSorting(order, orderBy))
-//                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-//                 .map(n => {
-//                   const isSelected = this.isSelected(n.id)
-//                   return (
-//                     <TableRow
-//                       hover
-//                       onClick={event => this.handleClick(event, n.id)}
-//                       role='checkbox'
-//                       aria-checked={isSelected}
-//                       tabIndex={-1}
-//                       key={n.id}
-//                       selected={isSelected}
-//                     >
-//                       <TableCell padding='checkbox'>
-//                         <Checkbox checked={isSelected} />
-//                       </TableCell>
-//                       <TableCell component='th' scope='row' padding='none'>
-//                         {n.name}
-//                       </TableCell>
-//                       <TableCell align='right'>{n.calories}</TableCell>
-//                       <TableCell align='right'>{n.fat}</TableCell>
-//                       <TableCell align='right'>{n.carbs}</TableCell>
-//                       <TableCell align='right'>{n.protein}</TableCell>
-//                     </TableRow>
-//                   )
-//                 })}
-//               {emptyRows > 0 && (
-//                 <TableRow style={{ height: 49 * emptyRows }}>
-//                   <TableCell colSpan={6} />
-//                 </TableRow>
-//               )}
-//             </TableBody>
-//           </Table>
-//         </div>
-//         <TablePagination
-//           rowsPerPageOptions={[5, 10, 25]}
-//           component='div'
-//           count={data.length}
-//           rowsPerPage={rowsPerPage}
-//           page={page}
-//           backIconButtonProps={{
-//             'aria-label': 'Previous Page'
-//           }}
-//           nextIconButtonProps={{
-//             'aria-label': 'Next Page'
-//           }}
-//           onChangePage={this.handleChangePage}
-//           onChangeRowsPerPage={this.handleChangeRowsPerPage}
-//         />
-//       </Paper>
-//     )
-//   }
-// }
-
-// Tables.propTypes = {
-//   classes: PropTypes.object.isRequired
-// }
-
-// export default withStyles(styles)(Tables)
-
-/**
- * Add New User Form
- */
 import React from 'react'
 import Tooltip from '@material-ui/core/Tooltip'
+import { Paper, Snackbar } from '@material-ui/core'
+import SweetAlert from 'react-bootstrap-sweetalert'
+import * as Actions from '../actions'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import SimpleModalWrapped from './createOrder'
 
-const users = [
-  {
-    email: 'hello',
-    name: '',
-    mobile: '',
-    status: '',
-    createdAt: ''
-  },
-  {
-    email: 'hello',
-    name: '',
-    mobile: '',
-    status: '',
-    createdAt: ''
-  },
-  {
-    email: 'hello',
-    name: '',
-    mobile: '',
-    status: '',
-    createdAt: ''
-  },
-  {
-    email: 'hello',
-    name: '',
-    mobile: '',
-    status: '',
-    createdAt: ''
+class UsersTable extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      user: null,
+      showAlert: false,
+      alertConfig: {
+        type: 'warning',
+        title: ''
+      },
+      orderId: '',
+      userDetails: {},
+      respSuccess: false,
+      respMessage: '',
+      open: false
+    }
   }
-]
-const UsersTable = ({
-  onDelete,
-  onDeactivate,
-  viewProfile,
-  forOctoAdmin = true
-}) => (
-  <table className='table table-middle table-hover mb-0'>
-    <thead>
-      <tr>
-        <th>Order Id</th>
-        <th>Due Date</th>
-        <th>Customer Name</th>
-        <th>Customer Address</th>
-        <th>Customer Phone</th>
-        <th>Amount</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {users.map((user, key) => (
-        <tr>
-          <td>
-            <div className='media'>
-              <div className='media-body'>
-                <h4 className='mb-3 fw-bold'>{user.name}</h4>
-              </div>
-            </div>
-          </td>
-          <td>{user.email}</td>
-          <td>{user.mobile}</td>
-          <td>{user.status}</td>
-          <td>{user.createdAt}</td>
-          <td>{user.createdAt}</td>
-          <td className='list-action'>
-            <Tooltip title='Edit Order' placement='bottom' disableFocusListener>
-              <a
-                href='javascript:void(0)'
-                onClick={e => {
-                  e.stopPropagation()
-                  //   onDelete(user)
-                }}
-                style={{
-                  textDecoration: 'none',
-                  color: 'black',
-                  marginLeft: '-15px'
-                }}
-              >
-                <i style={{ fontSize: '14px', padding: '5px' }} class='fas'>
-                  &#xf044;
-                </i>
-              </a>
-            </Tooltip>
-            <Tooltip
-              title='Delete Order'
-              placement='bottom'
-              disableFocusListener
-            >
-              <a
-                href='javascript:void(0)'
-                onClick={e => {
-                  e.stopPropagation()
-                  //   onDelete(user)
-                }}
-                style={{
-                  textDecoration: 'none',
-                  position: 'absolute',
-                  color: 'black'
-                }}
-              >
-                <i style={{ fontSize: '18px' }} class='fa'>
-                  &#xf014;
-                </i>
-              </a>
-            </Tooltip>
-            {/* )} */}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)
 
-export default UsersTable
+  componentWillMount () {}
+  askForConfirmation = order => {
+    let order_id = order._id
+    this.setState({
+      orderId: order_id
+    })
+    let alertConfig = { ...this.state.alertConfig }
+    alertConfig.type = 'warning'
+    alertConfig.title = 'Are you sure you want to delete Order ?'
+    this.setState({
+      alertConfig,
+      showAlert: true
+    })
+  }
+  afterConfirm = () => {
+    this.setState({
+      showAlert: false
+    })
+    const { dispatch } = this.props
+    let orderId = this.state.orderId
+    if (orderId) {
+      dispatch(Actions.deleteOrder(orderId))
+    }
+  }
+  componentWillReceiveProps (nextProps) {
+    if (
+      nextProps.deleteResp &&
+      nextProps.deleteResp.error &&
+      !nextProps.deleteResp.success &&
+      !nextProps.deleteResp.error.success &&
+      nextProps.deleteResp.error.message
+    ) {
+      this.setState({
+        respSuccess: true,
+        respMessage: nextProps.deleteResp.error.message
+      })
+    } else {
+      if (
+        nextProps.deleteResp &&
+        nextProps.deleteResp.success &&
+        nextProps.deleteResp.data.success
+      ) {
+        this.setState({
+          respSuccess: true,
+          respMessage: nextProps.deleteResp.data.message
+        })
+      } else {
+        this.setState({
+          respSuccess: false,
+          respMessage: ''
+        })
+      }
+    }
+  }
+  onCloseModal = () => {
+    this.setState({ open: false })
+  }
+  editOrderModel = (i, e) => {
+    this.setState({
+      open: true,
+      userDetails: {
+        itemName: i.itemName,
+        customerName: i.customerName,
+        customerMobile: i.customerMobile,
+        city: i.customerAddress.city,
+        state: i.customerAddress.state,
+        country: i.customerAddress.country,
+        amount: i.amount,
+        dueDate: i.dueDate,
+        _id: i._id
+      }
+    })
+  }
+  handleClose = () => {
+    this.setState({ respSuccess: false, open: false })
+  }
+  render () {
+    const { orders } = this.props
+    const { alertConfig, user, open } = this.state
+    return (
+      <div>
+        <table
+          className='table table-middle table-hover mb-0'
+          style={{ color: 'black' }}
+        >
+          <thead>
+            <tr>
+              <th>Item name</th>
+              <th>Customer Name</th>
+              <th>Customer Address</th>
+              <th>Customer Phone</th>
+              <th>Due Date</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.length ? (
+              orders.map((order, key) => (
+                <tr>
+                  <td>
+                    <h6 className='mb-1'>{order.itemName}</h6>
+                  </td>
+                  <td>{order.customerName}</td>
+                  <td>
+                    {order.customerAddress.city},{order.customerAddress.state},
+                    {order.customerAddress.country}
+                  </td>
+                  <td>{order.customerMobile}</td>
+                  <td>{order.dueDate.split('T')[0]}</td>
+                  <td>{order.amount}</td>
+                  <td className='list-action'>
+                    <Tooltip
+                      title='Edit Order'
+                      placement='bottom'
+                      disableFocusListener
+                    >
+                      <a
+                        href='javascript:void(0)'
+                        onClick={() => this.editOrderModel(order)}
+                        style={{
+                          textDecoration: 'none',
+                          color: 'black',
+                          marginLeft: '-15px'
+                        }}
+                      >
+                        <i
+                          style={{ fontSize: '14px', padding: '5px' }}
+                          className='fas'
+                        >
+                          &#xf044;
+                        </i>
+                      </a>
+                    </Tooltip>
+                    <Tooltip
+                      title='Delete Order'
+                      placement='bottom'
+                      disableFocusListener
+                    >
+                      <a
+                        href='javascript:void(0)'
+                        onClick={() => this.askForConfirmation(order)}
+                        style={{
+                          textDecoration: 'none',
+                          position: 'absolute',
+                          color: 'black'
+                        }}
+                      >
+                        <i style={{ fontSize: '18px' }} className='fa'>
+                          &#xf014;
+                        </i>
+                      </a>
+                    </Tooltip>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className={'text-center px-30 py-30'} colSpan='7'>
+                  {'No orders found'}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <Paper className='w-80 p-12'>
+          <div className='d-flex flex-column py-20'>
+            <SweetAlert
+              warning
+              show={this.state.showAlert}
+              title={alertConfig.title}
+              showCancel
+              onConfirm={() => this.afterConfirm()}
+              onCancel={() => {
+                this.setState({
+                  showAlert: false
+                })
+              }}
+            />
+          </div>
+        </Paper>
+        {open ? (
+          <SimpleModalWrapped
+            isOpen={open}
+            isClose={this.handleClose}
+            isEdit
+            values={this.state.userDetails}
+          />
+        ) : (
+          <SimpleModalWrapped
+            isOpen={open}
+            isClose={this.handleClose}
+            isEdit
+            values={this.state.userDetails}
+          />
+        )}
+        {/* <div>place is for edit component</div> */}
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          onClose={this.handleClose}
+          open={this.state.respSuccess}
+          message={this.state.respMessage}
+          autoHideDuration={4000}
+        />
+      </div>
+    )
+  }
+}
+
+function mapStateToProps (state) {
+  return {
+    deleteResp: state.deleteOrder,
+    editResp: state.editOrder
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(UsersTable))

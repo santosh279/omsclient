@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { history } from './helpers'
 import {
   Route,
   Redirect,
@@ -9,17 +8,42 @@ import {
 import SignIn from './Components/signInForm'
 import Register from './Components/registerForm'
 import NavigationRoutesPage from './Routes'
+import axios from 'axios'
 
 class App extends Component {
+  state = {
+    serverDown: false
+  }
+  componentDidMount () {
+    axios
+      .get('http://localhost:3003/')
+      .then(res => {
+        console.log('response inside the start page', res)
+      })
+      .catch(error => {
+        console.log(error.name === 'Error')
+        if (error.name === 'Error') {
+          // this.setState({
+          //   serverDown: true
+          // })
+          localStorage.clear()
+          // window.location.href = '/'
+          // window.location.reload()
+        }
+        console.log(this.state.serverDown)
+      })
+  }
   render () {
     // validate authentication
     const isAuth = () => {
-      let access_token = localStorage.getItem('user')
+      let access_token = localStorage.getItem('access_token')
+      let rememberMe = localStorage.getItem('rememberMe')
       if (access_token) {
         return true
       }
       return false
     }
+
     return (
       <Router>
         <div className='app'>
